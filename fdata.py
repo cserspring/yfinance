@@ -28,10 +28,10 @@ for ticker in tickers:
     try:
         h0 = t.history(start=d00, end=d01)
         h1 = t.history(start=d10, end=d11)
-        now = h1["Close"][-1] # The result is in ascending order by date
-        prev = h0["Close"][-1]
+        now = h1["Close"].iloc[-1] # The result is in ascending order by date
+        prev = h0["Close"].iloc[-1]
         p = (now - prev) / prev
-        res.append(DataPoint(ticker, p))
+        res.append(DataPoint(ticker.upper(), p))
     except Exception as e:
         pass
 res.sort(key=lambda x:x.p, reverse=True)

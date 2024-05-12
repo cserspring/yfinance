@@ -12,7 +12,7 @@ class DataPoint:
         return f"{self.t}: {self.p:.2%}"
 
 csvFile = sys.argv[1]
-ticker = sys.argv[2]
+ticker = sys.argv[2].upper()
 cache = {}
 yahooFormat = "%Y%m%d"
 totalCurValue = 0.0
@@ -34,20 +34,18 @@ with open(csvFile, mode='r') as file:
             curPrice = cache[line['Symbol']]
         else:
             s = yf.Ticker(line['Symbol'])
-            curPrice = float((s.history(start=todayStart, end=todayEnd)['Close'])[-1])
+            curPrice = float((s.history(start=todayStart, end=todayEnd)['Close']).iloc[-1])
             cache[line['Symbol']] = curPrice
         totalCurValue += curPrice * float(line['Quantity'])
 
-        shares = buyValue / float((t.history(start=originalStart,end=originalEnd)['Close'])[-1])
+        shares = buyValue / float((t.history(start=originalStart,end=originalEnd)['Close']).iloc[-1])
         totalShares += shares
 
 
 h0 = t.history(start=todayStart, end=todayEnd)
-t_price_today = h0['Close'][-1]
+t_price_today = h0['Close'].iloc[-1]
 totalTickerValue = totalShares * t_price_today
 
-print(f"Deposit: {originalValue}")
-print(f"Current value: {totalCurValue}")
-print(f"Invested in {ticker}: {totalTickerValue}")
-print(f"Current gain: {(totalCurValue - originalValue)/originalValue :.2%}")
-print(f"Ticker gain: {(totalTickerValue - originalValue)/originalValue :.2%}")
+print(f"Deposit: \t\t {originalValue :.2f}")
+print(f"Current value: \t\t {totalCurValue :.2f} \t gain: {(totalCurValue - originalValue) :.2f} \t {(totalCurValue - originalValue)/originalValue :.2%}")
+print(f"If invested in {ticker}: \t {totalTickerValue :.2f} \t gain: {(totalTickerValue - originalValue) :.2f} \t {(totalTickerValue - originalValue)/originalValue :.2%}")
